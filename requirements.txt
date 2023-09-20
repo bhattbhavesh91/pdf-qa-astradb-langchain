@@ -1,0 +1,7 @@
+streamlit
+cassandra-driver
+langchain
+openai
+pypdf
+"cassio>=0.1.1"
+tiktoken==0.4.0
