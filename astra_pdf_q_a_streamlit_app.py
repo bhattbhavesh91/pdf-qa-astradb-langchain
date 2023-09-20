@@ -14,6 +14,7 @@ from langchain.document_loaders import TextLoader, PyPDFLoader
 from cassandra.cluster import Cluster
 from cassandra.auth import PlainTextAuthProvider
 from copy import deepcopy
+from tempfile import NamedTemporaryFile
 
 @st.cache_resource
 def create_datastax_connection():
@@ -76,9 +77,11 @@ def main():
                                 accept_multiple_files = False, 
                                 type=['pdf'])
         if st.button('Process'):
-            if docs:
+            with NamedTemporaryFile(dir='.', suffix='.pdf') as f:
+                f.write(docs.getbuffer())
                 with st.spinner('Processing'):
-                    loader = PyPDFLoader(docs.name)
+                    file_name = f.name
+                    loader = PyPDFLoader(file_name)
                     pages = loader.load_and_split()
                     pdf_index = out_index_creator.from_loaders([loader])
                     # index_placeholder = deepcopy(pdf_index)
